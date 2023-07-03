@@ -17,18 +17,24 @@ const moteSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Mote must belong to a user!"],
     },
-    comments: [
+    comments_user: [
       {
         type: mongoose.Types.ObjectId,
         ref: "Comment",
       },
     ],
-    likes: [
+    likes_user: [
       {
         type: mongoose.Types.ObjectId,
         ref: "Like",
       },
     ],
+    comments: {
+      type: Number,
+    },
+    likes: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
