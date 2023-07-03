@@ -41,3 +41,34 @@ exports.signup = asyncHandler(async (req, res) => {
     throw new Error("User data invalid!");
   }
 });
+
+exports.login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("All fields are mandatory!");
+  }
+  const user = await User.findOne({ email });
+
+  //compare password with hashedPassword
+  const passwordCompare = await bcrypt.compare(password, user.password);
+  if (user && passwordCompare) {
+    const accessToken = jwt.sign(
+      {
+        user: {
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          id: user.id,
+          motes: [],
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+    );
+    res.status(200).json({ accessToken });
+  } else {
+    res.status(401);
+    throw new Error("Email or password invalid!");
+  }
+});
