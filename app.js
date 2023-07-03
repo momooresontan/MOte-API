@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const userRouter = require("./routes/userRoute");
 const connectDB = require("./config/connectDB");
+const errorHandler = require("./middlewares/errorHandler");
 
 dotenv.config();
 
@@ -13,6 +14,8 @@ app.use(express.json());
 
 //Mounting routes
 app.use("/api/v1/users", userRouter);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
