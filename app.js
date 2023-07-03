@@ -1,6 +1,11 @@
 const express = require("express");
-const userRouter = require("../routes/userRoute");
+const dotenv = require("dotenv");
+const userRouter = require("./routes/userRoute");
+const connectDB = require("./config/connectDB");
 
+dotenv.config();
+
+connectDB();
 const app = express();
 
 //Mounting routes
