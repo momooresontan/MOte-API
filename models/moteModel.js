@@ -23,7 +23,12 @@ const moteSchema = new mongoose.Schema(
         ref: "Comment",
       },
     ],
-    likes: [],
+    likes: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Like",
+      },
+    ],
   },
   {
     timestamps: true,
