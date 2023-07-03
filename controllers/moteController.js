@@ -84,3 +84,13 @@ exports.deleteMote = asyncHandler(async (req, res) => {
   }
   res.status(204).json({ message: "Mote has been deleted" });
 });
+
+exports.getByUserId = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const userMotes = await User.findById(userId).populate("motes");
+  if (!userMotes) {
+    res.status(404);
+    throw new Error("No motes found!");
+  }
+  res.status(200).json({ userMotes });
+});
