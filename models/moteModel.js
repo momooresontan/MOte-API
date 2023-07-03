@@ -5,4 +5,13 @@ const moteSchema = new mongoose.Schema({
     type: String,
     required: [true, "Say something"],
   },
+  images: {
+    type: String,
+  },
+  video: {
+    type: String,
+  },
+  originalMoteId: {
+    type: null,
+  },
 });
