@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const moteSchema = new mongoose.Schema(
   {
-    mote: {
+    text: {
       type: String,
       required: [true, "Say something"],
     },
@@ -17,22 +17,22 @@ const moteSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Mote must belong to a user!"],
     },
-    comments_user: [
+    comments: [
       {
         type: mongoose.Types.ObjectId,
         ref: "Comment",
       },
     ],
-    likes_user: [
+    likes: [
       {
         type: mongoose.Types.ObjectId,
         ref: "Like",
       },
     ],
-    comments: {
+    comment_count: {
       type: Number,
     },
-    likes: {
+    like_count: {
       type: Number,
     },
   },
