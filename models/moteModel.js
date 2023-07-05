@@ -31,6 +31,7 @@ const moteSchema = new mongoose.Schema(
     ],
     comment_count: {
       type: Number,
+      //default: 0,
     },
     like_count: {
       type: Number,
@@ -40,6 +41,12 @@ const moteSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// moteSchema.post("save", function (next) {
+//   const likeCount = this.likes.length;
+//   this.like_count = likeCount;
+//   next();
+// });
 
 const Mote = mongoose.model("Mote", moteSchema);
 

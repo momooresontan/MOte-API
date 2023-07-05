@@ -60,6 +60,9 @@ exports.getMoteById = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Mote not found!");
   }
+  const likeCount = mote.likes.length;
+  mote.like_count = likeCount;
+
   res.status(200).json({ mote });
 });
 
@@ -115,12 +118,9 @@ exports.likeMote = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   await mote.save({ session });
-  mote.likes.push(isLiked);
+  mote.likes.push(isLiked.user);
   await mote.save({ session });
   await session.commitTransaction();
-
-  const likeCount = mote.likes.length;
-  mote.like_count = likeCount;
 
   res.status(201).json({ isLiked });
 });
