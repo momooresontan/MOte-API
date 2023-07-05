@@ -132,9 +132,13 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Mote not found!" });
   }
   const { user } = req.body;
+
+  const session = await mongoose.startSession();
   session.startTransaction();
   await mote.save({ session });
   mote.likes.pull(user);
   await mote.save({ session });
   await session.commitTransaction();
+
+  res.status(201).json({ message: "Mote unliked" });
 });

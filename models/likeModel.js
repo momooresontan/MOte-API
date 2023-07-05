@@ -11,7 +11,6 @@ const likeSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Like must have a user!"],
     },
-
     // mote: {
     //   type: mongoose.Types.ObjectId,
     //   ref: "Motes",
