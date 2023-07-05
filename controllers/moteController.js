@@ -131,4 +131,10 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
   if (!mote) {
     res.status(500).json({ message: "Mote not found!" });
   }
+  const { user } = req.body;
+  session.startTransaction();
+  await mote.save({ session });
+  mote.likes.pull(user);
+  await mote.save({ session });
+  await session.commitTransaction();
 });
