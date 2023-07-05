@@ -8,6 +8,7 @@ const {
   getByUserId,
   likeMote,
   unlikeMote,
+  addComment,
 } = require("../controllers/moteController");
 
 const router = express.Router();
@@ -24,6 +25,6 @@ router.get("/myMotes/:id", getByUserId);
 router.post("/like/:id", likeMote);
 router.post("/unlike/:id", unlikeMote);
 
-router.post("/comment/:id");
+router.post("/comment/:id", addComment);
 
 module.exports = router;

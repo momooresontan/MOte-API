@@ -145,6 +145,11 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
 });
 
 exports.addComment = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const mote = await Mote.findById(id);
+  if (!mote) {
+    res.status(500).json({ message: "Mote not found!" });
+  }
   const { text, user } = req.body;
   if (!text || !user) {
     res.status(400);
@@ -159,7 +164,15 @@ exports.addComment = asyncHandler(async (req, res) => {
     user,
   });
   try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await mote.save({ session });
+    mote.comments.push(comment);
+    await mote.save({ session });
+    await session.commitTransaction();
   } catch (err) {
     return console.log(err);
   }
+
+  res.status(201).json({ comment });
 });
