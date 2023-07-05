@@ -150,29 +150,26 @@ exports.addComment = asyncHandler(async (req, res) => {
   if (!mote) {
     res.status(500).json({ message: "Mote not found!" });
   }
-  const existingUser = await User.findById(user);
-  if (!existingUser) {
-    res.status(500).json({ message: "User not found!" });
-  }
   const { text, user } = req.body;
   if (!text || !user) {
     res.status(400);
     throw new Error("All fields required!");
   }
+  const existingUser = await User.findById(user);
+  if (!existingUser) {
+    res.status(500).json({ message: "User not found!" });
+  }
   const comment = new Comment({
     text,
     user,
   });
-  try {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    await mote.save({ session });
-    mote.comments.push(comment);
-    await mote.save({ session });
-    await session.commitTransaction();
-  } catch (err) {
-    return console.log(err);
-  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  await mote.save({ session });
+  mote.comments.push(comment);
+  await mote.save({ session });
+  await session.commitTransaction();
 
   res.status(201).json({ comment });
 });
