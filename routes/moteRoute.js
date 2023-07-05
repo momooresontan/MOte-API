@@ -24,4 +24,6 @@ router.get("/myMotes/:id", getByUserId);
 router.post("/like/:id", likeMote);
 router.post("/unlike/:id", unlikeMote);
 
+router.post("/comment/:id");
+
 module.exports = router;

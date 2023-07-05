@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Mote = require("../models/moteModel");
 const User = require("../models/userModel");
 const Like = require("../models/likeModel");
+const Comment = require("../models/commentModel");
 
 exports.getAllMotes = asyncHandler(async (req, res) => {
   const motes = await Mote.find();
@@ -141,4 +142,24 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
   await session.commitTransaction();
 
   res.status(201).json({ message: "Mote unliked" });
+});
+
+exports.addComment = asyncHandler(async (req, res) => {
+  const { text, user } = req.body;
+  if (!text || !user) {
+    res.status(400);
+    throw new Error("All fields required!");
+  }
+  const existingUser = await User.findById(user);
+  if (!existingUser) {
+    res.status(500).json({ message: "User not found!" });
+  }
+  const comment = new Comment({
+    text,
+    user,
+  });
+  try {
+  } catch (err) {
+    return console.log(err);
+  }
 });
