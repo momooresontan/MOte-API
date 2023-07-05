@@ -119,7 +119,16 @@ exports.likeMote = asyncHandler(async (req, res) => {
   await mote.save({ session });
   await session.commitTransaction();
 
+  const likeCount = mote.likes.length();
+  await mote.like_count(likeCount);
+
   res.status(201).json({ isLiked });
 });
 
-exports.unlikeMote = asyncHandler(async (req, res) => {});
+exports.unlikeMote = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const mote = await Mote.findById(id);
+  if (!mote) {
+    res.status(500).json({ message: "Mote not found!" });
+  }
+});
