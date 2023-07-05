@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const Mote = require("../models/moteModel");
 const User = require("../models/userModel");
+const Like = require("../models/likeModel");
 
 exports.getAllMotes = asyncHandler(async (req, res) => {
   const motes = await Mote.find();
@@ -94,3 +95,31 @@ exports.getByUserId = asyncHandler(async (req, res) => {
   }
   res.status(200).json({ userMotes });
 });
+
+exports.likeMote = asyncHandler(async (req, res) => {
+  const { liked, user } = req.body;
+  if (!liked || !user) {
+    res.status(400);
+    throw new Error("All fields are mandatory & must be true!");
+  }
+  const id = req.params.id;
+  const mote = await Mote.findById(id);
+  if (!mote) {
+    res.status(500).json({ message: "Mote not found!" });
+  }
+  const isLiked = new Like({
+    liked,
+    user,
+  });
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  await mote.save({ session });
+  mote.likes.push(isLiked);
+  await mote.save({ session });
+  await session.commitTransaction();
+
+  res.status(201).json({ isLiked });
+});
+
+exports.unlikeMote = asyncHandler(async (req, res) => {});

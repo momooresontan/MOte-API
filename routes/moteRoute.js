@@ -6,6 +6,7 @@ const {
   updateMote,
   deleteMote,
   getByUserId,
+  likeMote,
 } = require("../controllers/moteController");
 
 const router = express.Router();
@@ -18,5 +19,7 @@ router.patch("/:id", updateMote);
 router.delete("/:id", deleteMote);
 
 router.get("/myMotes/:id", getByUserId);
+
+router.post("/like/:id", likeMote);
 
 module.exports = router;
