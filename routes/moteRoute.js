@@ -9,6 +9,7 @@ const {
   likeMote,
   unlikeMote,
   addComment,
+  deleteComment,
 } = require("../controllers/moteController");
 
 const router = express.Router();
@@ -26,5 +27,6 @@ router.post("/like/:id", likeMote);
 router.post("/unlike/:id", unlikeMote);
 
 router.post("/comment/:id", addComment);
+router.delete("/comment/:id", deleteComment);
 
 module.exports = router;

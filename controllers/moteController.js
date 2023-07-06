@@ -189,12 +189,11 @@ exports.addComment = asyncHandler(async (req, res) => {
 exports.deleteComment = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const comment = await Comment.findByIdAndDelete(id).populate("mote");
-  await comment.mote.comment.pull(comment);
+  await comment.mote.comments.pull(comment);
   await comment.mote.save();
+  if (!comment) {
+    res.status(404);
+    throw new Error("Comment not found");
+  }
+  res.status(204).json({ message: "Comment deleted" });
 });
-await mote.user.motes.pull(mote);
-await mote.user.save();
-if (!mote) {
-  res.status(404);
-  throw new Error("Mote not found!");
-}
