@@ -119,9 +119,9 @@ exports.likeMote = asyncHandler(async (req, res) => {
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
-    await mote.save({ session });
+    await isLiked.save({ session });
     mote.likes.push(isLiked.user);
-    await mote.save({ session });
+    await isLiked.save({ session });
     await session.commitTransaction();
   } catch (err) {
     console.log(err);
@@ -153,15 +153,14 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
 });
 
 exports.addComment = asyncHandler(async (req, res) => {
-  const id = req.params.id;
-  const mote = await Mote.findById(id);
-  if (!mote) {
-    res.status(500).json({ message: "Mote not found!" });
-  }
-  const { text, user } = req.body;
+  const { text, user, moteId } = req.body;
   if (!text || !user) {
     res.status(400);
     throw new Error("All fields required!");
+  }
+  const mote = await Mote.findById(moteId);
+  if (!mote) {
+    res.status(500).json({ message: "Mote not found!" });
   }
   const existingUser = await User.findById(user);
   if (!existingUser) {
@@ -175,9 +174,9 @@ exports.addComment = asyncHandler(async (req, res) => {
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
-    await mote.save({ session });
+    await comment.save({ session });
     mote.comments.push(comment);
-    await mote.save({ session });
+    await comment.save({ session });
     await session.commitTransaction();
   } catch (err) {
     console.log(err);
@@ -188,9 +187,10 @@ exports.addComment = asyncHandler(async (req, res) => {
 
 exports.deleteComment = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const comment = await Comment.findByIdAndDelete(id).populate("mote");
-  await comment.mote.comments.pull(comment);
-  await comment.mote.save();
+  const comment = await Comment.findById(id).populate("mote");
+  console.log(comment);
+  // await comment.mote.comments.pull(comment);
+  // await comment.mote.save();
   if (!comment) {
     res.status(404);
     throw new Error("Comment not found");
