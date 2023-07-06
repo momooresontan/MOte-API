@@ -116,12 +116,16 @@ exports.likeMote = asyncHandler(async (req, res) => {
     user,
   });
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  await mote.save({ session });
-  mote.likes.push(isLiked.user);
-  await mote.save({ session });
-  await session.commitTransaction();
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await mote.save({ session });
+    mote.likes.push(isLiked.user);
+    await mote.save({ session });
+    await session.commitTransaction();
+  } catch (err) {
+    console.log(err);
+  }
 
   res.status(201).json({ isLiked });
 });
@@ -134,12 +138,16 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
   }
   const { user } = req.body;
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  await mote.save({ session });
-  mote.likes.pull(user);
-  await mote.save({ session });
-  await session.commitTransaction();
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await mote.save({ session });
+    mote.likes.pull(user);
+    await mote.save({ session });
+    await session.commitTransaction();
+  } catch (err) {
+    console.log(err);
+  }
 
   res.status(201).json({ message: "Mote unliked" });
 });
@@ -164,12 +172,29 @@ exports.addComment = asyncHandler(async (req, res) => {
     user,
   });
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  await mote.save({ session });
-  mote.comments.push(comment);
-  await mote.save({ session });
-  await session.commitTransaction();
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await mote.save({ session });
+    mote.comments.push(comment);
+    await mote.save({ session });
+    await session.commitTransaction();
+  } catch (err) {
+    console.log(err);
+  }
 
   res.status(201).json({ comment });
 });
+
+exports.deleteComment = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const comment = await Comment.findByIdAndDelete(id).populate("mote");
+  await comment.mote.comment.pull(comment);
+  await comment.mote.save();
+});
+await mote.user.motes.pull(mote);
+await mote.user.save();
+if (!mote) {
+  res.status(404);
+  throw new Error("Mote not found!");
+}
