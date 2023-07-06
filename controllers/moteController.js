@@ -61,6 +61,8 @@ exports.getMoteById = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Mote not found!");
   }
+  const commentCount = mote.comments.length;
+  mote.comment_count = commentCount;
   const likeCount = mote.likes.length;
   mote.like_count = likeCount;
 
@@ -154,11 +156,11 @@ exports.unlikeMote = asyncHandler(async (req, res) => {
 
 exports.addComment = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const moteAvailable = await Mote.findById(id);
-  if (!moteAvailable) {
+  const mote = await Mote.findById(id);
+  if (!mote) {
     res.status(500).json({ message: "Mote not found!" });
   }
-  const { text, user, mote } = req.body;
+  const { text, user, moteId } = req.body;
   if (!text || !user) {
     res.status(400);
     throw new Error("All fields required!");
@@ -170,15 +172,15 @@ exports.addComment = asyncHandler(async (req, res) => {
   let comment = new Comment({
     text,
     user,
-    mote,
+    moteId,
   });
 
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
     await comment.save({ session });
-    moteAvailable.comments.push(comment);
-    await moteAvailable.save({ session });
+    mote.comments.push(comment);
+    await mote.save({ session });
     await session.commitTransaction();
   } catch (err) {
     return console.log(err);
@@ -189,9 +191,9 @@ exports.addComment = asyncHandler(async (req, res) => {
 
 exports.deleteComment = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  let comment = await Comment.findByIdAndRemove(id).populate("mote");
-  await comment.mote.comments.pull(comment);
-  await comment.mote.save();
+  let comment = await Comment.findByIdAndRemove(id).populate("moteId");
+  await comment.moteId.comments.pull(comment);
+  await comment.moteId.save();
   if (!comment) {
     res.status(404);
     throw new Error("Comment not found");
