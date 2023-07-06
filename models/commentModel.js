@@ -11,6 +11,10 @@ const commentSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Comment must belong to a user"],
     },
+    mote: {
+      type: mongoose.Types.ObjectId,
+      ref: "Mote",
+    },
     // _id: {
     //   type: mongoose.Types.ObjectId,
     //   ref: "User",
