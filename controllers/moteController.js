@@ -166,7 +166,7 @@ exports.addComment = asyncHandler(async (req, res) => {
   if (!existingUser) {
     res.status(500).json({ message: "User not found!" });
   }
-  const comment = new Comment({
+  let comment = new Comment({
     text,
     user,
   });
@@ -179,7 +179,7 @@ exports.addComment = asyncHandler(async (req, res) => {
     await mote.save({ session });
     await session.commitTransaction();
   } catch (err) {
-    console.log(err);
+    return console.log(err);
   }
 
   res.status(201).json({ comment });
@@ -187,10 +187,10 @@ exports.addComment = asyncHandler(async (req, res) => {
 
 exports.deleteComment = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const comment = await Comment.findById(id).populate("mote");
+  let comment = await Comment.findByIdAndRemove(id).populate("mote");
   console.log(comment);
-  // await comment.mote.comments.pull(comment);
-  // await comment.mote.save();
+  await comment.mote.comments.pull(comment);
+  await comment.mote.save();
   if (!comment) {
     res.status(404);
     throw new Error("Comment not found");
