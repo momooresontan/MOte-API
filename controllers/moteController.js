@@ -121,7 +121,7 @@ exports.likeMote = asyncHandler(async (req, res) => {
     session.startTransaction();
     await isLiked.save({ session });
     mote.likes.push(isLiked.user);
-    await isLiked.save({ session });
+    await mote.save({ session });
     await session.commitTransaction();
   } catch (err) {
     console.log(err);
@@ -176,7 +176,7 @@ exports.addComment = asyncHandler(async (req, res) => {
     session.startTransaction();
     await comment.save({ session });
     mote.comments.push(comment);
-    await comment.save({ session });
+    await mote.save({ session });
     await session.commitTransaction();
   } catch (err) {
     console.log(err);
